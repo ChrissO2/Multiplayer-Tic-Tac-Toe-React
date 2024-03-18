@@ -5,7 +5,7 @@ WORKDIR /usr/src/server
 COPY package.json yarn.lock ./
 
 # Install dependencies
-RUN yarn install --frozen-lockfile
+RUN yarn install
 RUN yarn remove bcrypt
 RUN yarn add bcrypt
 RUN yarn install

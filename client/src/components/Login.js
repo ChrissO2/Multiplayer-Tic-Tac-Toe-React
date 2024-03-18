@@ -13,12 +13,19 @@ function Login({ setIsAuth }) {
       password,
     }).then((res) => {
       const { firstName, lastName, username, token, userId } = res.data;
-      cookies.set("token", token);
-      cookies.set("userId", userId);
-      cookies.set("username", username);
-      cookies.set("firstName", firstName);
-      cookies.set("lastName", lastName);
-      setIsAuth(true);
+      if (token) {
+        cookies.set("token", token);
+        cookies.set("userId", userId);
+        cookies.set("username", username);
+        cookies.set("firstName", firstName);
+        cookies.set("lastName", lastName);
+        setIsAuth(true);
+      } else {
+        alert("Bad credidentials");
+      }
+    })
+    .catch((err) => {
+      alert("Error logging in");
     });
   };
   return (
