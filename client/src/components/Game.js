@@ -11,7 +11,7 @@ function Game({ channel, setChannel }) {
     setPlayersJoined(event.watcher_count === 2);
   });
   if (!playersJoined) {
-    return <div> Waiting for other player to join...</div>;
+    return <div className="gameMessage"> Waiting for other player to join...</div>;
   }
   return (
     <div className="gameContainer">
