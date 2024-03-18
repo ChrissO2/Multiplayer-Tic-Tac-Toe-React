@@ -3,14 +3,14 @@ version: '3'
 services:
   server:
     build: server/
-    # command: yarn start
+    environment:
+      - API_KEY=bqxzr4ejb4e2
+      - API_SECRET=nch5dqvpeqmbk574wmbt3qgzc3qm5b3s4knfgfg62qm38f64kxmmdu24x565hd6b
     ports:
       - 3001:3001
   
   client:
     build: client/
-    # command: yarn start
-    # network_mode: host
     ports:
       - 3000:3000
     depends_on:
