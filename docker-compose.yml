@@ -11,6 +11,8 @@ services:
   
   client:
     build: client/
+    environment:
+      - BACKEND_URL=http://54.196.71.89:3001
     ports:
       - 3000:3000
     depends_on:

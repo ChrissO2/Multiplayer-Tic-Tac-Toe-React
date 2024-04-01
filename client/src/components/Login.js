@@ -5,10 +5,11 @@ import Cookies from "universal-cookie";
 function Login({ setIsAuth }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const backend_url = process.env.BACKEND_URL;
 
   const cookies = new Cookies();
   const login = () => {
-    Axios.post("http://localhost:3001/login", {
+    Axios.post(backend_url, {
       username,
       password,
     }).then((res) => {
