@@ -5,9 +5,9 @@ import Cookies from "universal-cookie";
 function SignUp({ setIsAuth }) {
   const cookies = new Cookies();
   const [user, setUser] = useState(null);
-  const backend_url = process.env.BACKEND_URL;
 
   const signUp = () => {
+    const backend_url = process.env.BACKEND_URL;
     Axios.post(backend_url + '/signup', user).then((res) => {
       console.log('request url: ', backend_url + '/signup');
       const { token, userId, firstName, lastName, username, hashedPassword } =
