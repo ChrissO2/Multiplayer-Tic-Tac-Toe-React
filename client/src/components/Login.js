@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Axios from "axios";
 import Cookies from "universal-cookie";
+import { backend_url } from "../api_utils";
 
 function Login({ setIsAuth }) {
   const [username, setUsername] = useState("");
@@ -8,7 +9,6 @@ function Login({ setIsAuth }) {
 
   const cookies = new Cookies();
   const login = () => {
-    const backend_url = process.env.BACKEND_URL;
     Axios.post(backend_url + '/login', {
       username,
       password,
