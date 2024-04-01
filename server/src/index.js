@@ -14,22 +14,22 @@ const api_key = process.env.API_KEY;
 const api_secret = process.env.API_SECRET;
 const serverClient = StreamChat.getInstance(api_key, api_secret);
 
-app.post("/signup", cors(), async (req, res) => {
+app.post("/signup", async (req, res) => {
   try {
     const { firstName, lastName, username, password } = req.body;
     const userId = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
     const token = serverClient.createToken(userId);
-    res.header("Access-Control-Allow-Origin", "*");
+    // res.header("Access-Control-Allow-Origin", "*");
     res.json({ token, userId, firstName, lastName, username, hashedPassword });
   } catch (error) {
     res.json(error);
   }
 });
 
-app.post("/login", cors(), async (req, res) => {
+app.post("/login", async (req, res) => {
   try {
-    res.header("Access-Control-Allow-Origin", "*");
+    // res.header("Access-Control-Allow-Origin", "*");
     const { username, password } = req.body;
     const { users } = await serverClient.queryUsers({ name: username });
     if (users.length === 0) return res.json({ message: "User not found" });
