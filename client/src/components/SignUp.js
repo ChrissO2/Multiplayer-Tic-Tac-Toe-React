@@ -19,6 +19,9 @@ function SignUp({ setIsAuth }) {
       cookies.set("lastName", lastName);
       cookies.set("hashedPassword", hashedPassword);
       setIsAuth(true);
+    }).catch((err) => {
+      console.log('request url: ', backend_url + '/signup');
+      console.log(err);
     });
   };
   return (
