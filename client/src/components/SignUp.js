@@ -9,6 +9,7 @@ function SignUp({ setIsAuth }) {
 
   const signUp = () => {
     Axios.post(backend_url + '/signup', user).then((res) => {
+      console.log('request url: ', backend_url + '/signup');
       const { token, userId, firstName, lastName, username, hashedPassword } =
         res.data;
       cookies.set("token", token);
