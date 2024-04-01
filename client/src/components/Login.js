@@ -27,6 +27,7 @@ function Login({ setIsAuth }) {
     })
     .catch((err) => {
       alert("Error logging in");
+      console.log(err);
     });
   };
   return (
