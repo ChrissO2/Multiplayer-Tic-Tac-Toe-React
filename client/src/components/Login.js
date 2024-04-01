@@ -9,7 +9,7 @@ function Login({ setIsAuth }) {
 
   const cookies = new Cookies();
   const login = () => {
-    Axios.post(backend_url, {
+    Axios.post(backend_url + '/login', {
       username,
       password,
     }).then((res) => {

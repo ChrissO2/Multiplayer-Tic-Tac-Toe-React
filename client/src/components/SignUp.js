@@ -8,7 +8,7 @@ function SignUp({ setIsAuth }) {
   const backend_url = process.env.BACKEND_URL;
 
   const signUp = () => {
-    Axios.post(backend_url, user).then((res) => {
+    Axios.post(backend_url + '/signup', user).then((res) => {
       const { token, userId, firstName, lastName, username, hashedPassword } =
         res.data;
       cookies.set("token", token);
