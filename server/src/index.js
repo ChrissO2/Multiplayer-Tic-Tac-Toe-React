@@ -20,6 +20,7 @@ app.post("/signup", cors(), async (req, res) => {
     const userId = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
     const token = serverClient.createToken(userId);
+    res.header("Access-Control-Allow-Origin", "*");
     res.json({ token, userId, firstName, lastName, username, hashedPassword });
   } catch (error) {
     res.json(error);
@@ -28,6 +29,7 @@ app.post("/signup", cors(), async (req, res) => {
 
 app.post("/login", cors(), async (req, res) => {
   try {
+    res.header("Access-Control-Allow-Origin", "*");
     const { username, password } = req.body;
     const { users } = await serverClient.queryUsers({ name: username });
     if (users.length === 0) return res.json({ message: "User not found" });
