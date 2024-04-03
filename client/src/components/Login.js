@@ -9,7 +9,7 @@ function Login({ setIsAuth }) {
 
   const cookies = new Cookies();
   const login = () => {
-    Axios.post(window.location.hostname.slice(0, -1) + '1/login', {
+    Axios.post("http://" + window.location.hostname + ':3001/login', {
       username,
       password,
     }).then((res) => {
