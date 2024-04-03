@@ -13,4 +13,4 @@ RUN yarn global add serve
 
 EXPOSE 3000
 
-CMD ["serve"]
+CMD ["serve", "-s", "build", "-l", "3000", "--no-clipboard", "--detached"]
