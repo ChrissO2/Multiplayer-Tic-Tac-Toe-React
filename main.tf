@@ -63,7 +63,7 @@ resource "aws_instance" "app_server" {
       "sudo yum install -y git",
       "sudo git clone https://github.com/ChrissO2/Multiplayer-Tic-Tac-Toe-React.git",
       "cd Multiplayer-Tic-Tac-Toe-React",
-      "sudo docker-compose up"
+      "sudo docker-compose up --detach"
     ]
   }
 }
