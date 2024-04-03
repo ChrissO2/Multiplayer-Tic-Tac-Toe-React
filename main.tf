@@ -33,8 +33,8 @@ resource "local_file" "private_key" {
 }
 
 resource "aws_instance" "app_server" {
-  ami                         = "ami-0c101f26f147fa7fd"
-  instance_type               = "t2.micro"
+  ami                         = "ami-051f8a213df8bc089"
+  instance_type               = "t3.micro"
   subnet_id                   = aws_subnet.pub_subnet.id
   vpc_security_group_ids      = [aws_security_group.my_group.id]
   associate_public_ip_address = true
@@ -62,6 +62,8 @@ resource "aws_instance" "app_server" {
       "sudo chmod +x /usr/local/bin/docker-compose",
       "sudo yum install -y git",
       "sudo git clone https://github.com/ChrissO2/Multiplayer-Tic-Tac-Toe-React.git",
+      "cd Multiplayer-Tic-Tac-Toe-React",
+      "sudo docker-compose up"
     ]
   }
 }
