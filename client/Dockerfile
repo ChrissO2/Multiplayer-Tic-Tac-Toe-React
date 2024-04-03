@@ -8,6 +8,9 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
+RUN yarn build
+RUN yarn global add serve
+
 EXPOSE 3000
 
-CMD ["yarn", "start"]
+CMD ["serve"]
