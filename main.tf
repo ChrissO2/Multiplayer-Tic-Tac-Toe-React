@@ -34,7 +34,7 @@ resource "local_file" "private_key" {
 
 resource "aws_instance" "app_server" {
   ami                         = "ami-0c101f26f147fa7fd"
-  instance_type               = "t2.micro"
+  instance_type               = "t3.medium"
   subnet_id                   = aws_subnet.pub_subnet.id
   vpc_security_group_ids      = [aws_security_group.my_group.id]
   associate_public_ip_address = true
@@ -130,7 +130,7 @@ resource "aws_vpc" "my_vpc" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
   tags = {
-    Name = "MyVPC"
+    Name = "MyVPC1"
   }
 }
 
