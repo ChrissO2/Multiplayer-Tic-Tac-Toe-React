@@ -9,11 +9,12 @@ function Login({ setIsAuth }) {
 
   const cookies = new Cookies();
   const login = () => {
-    Axios.post(backend_url + '/login', {
+    Axios.post(window.location.hostname + ':3001/login', {
       username,
       password,
     }).then((res) => {
-      console.log('request url: ', backend_url + '/login');
+      // console.log('request url: ', backend_url + '/login');
+      console.log('request url: ', window.location.hostname + ':3001/login');
       const { firstName, lastName, username, token, userId } = res.data;
       if (token) {
         cookies.set("token", token);
