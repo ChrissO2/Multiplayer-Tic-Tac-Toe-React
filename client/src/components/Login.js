@@ -13,8 +13,7 @@ function Login({ setIsAuth }) {
       username,
       password,
     }).then((res) => {
-      // console.log('request url: ', backend_url + '/login');
-      console.log('request url: ', window.location.hostname + ':3001/login');
+      console.log('request url: ', backend_url + '/login');
       const { firstName, lastName, username, token, userId } = res.data;
       if (token) {
         cookies.set("token", token);
