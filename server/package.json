@@ -3,14 +3,19 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "type": "module",
   "scripts": {
     "start": "nodemon src/index.js"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity": "^3.575.0",
+    "amazon-cognito-identity-js": "^6.3.12",
+    "aws-sdk": "^2.1619.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^4.17.3",
+    "jsonwebtoken": "^9.0.2",
+    "jwk-to-pem": "^2.0.5",
+    "node-fetch": "^3.3.2",
     "nodemon": "^2.0.15",
     "stream-chat": "^6.2.0",
     "uuid": "^8.3.2"
