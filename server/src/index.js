@@ -8,8 +8,7 @@ const { CognitoUserPool, CognitoUserAttribute, AuthenticationDetails, CognitoUse
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
 const bodyParser = require('body-parser')
-
-
+const { awsSignUp, awsSignIn, awsRefreshTokenExchange } = require('./auth/aws_utils');
 
 const app = express();
 
@@ -25,65 +24,6 @@ const api_secret =
 // const api_key = process.env.API_KEY;
 // const api_secret = process.env.API_SECRET;
 const serverClient = StreamChat.getInstance(api_key, api_secret);
-
-const poolData = {
-  UserPoolId : "us-east-1_Gg858zqYR",
-  ClientId : "7s7a8gjso25317s2n5n73ib328"
-};
-
-const userPool = new CognitoUserPool(poolData);
-
-
-const awsSignUp = async (username, password, email) => {
-  return new Promise((resolve, reject) => {
-    const attributeList = [];
-    const dataEmail = {
-        Name : 'email',
-        Value : email
-    };
-    const attributeEmail = new CognitoUserAttribute(dataEmail);
-    attributeList.push(attributeEmail);
-    userPool.signUp(username, password, attributeList, null, (err, result) => {
-        if (err) {
-            console.log(err);
-            reject(err);
-            return;
-        }
-        const cognitoUser = result.user;
-        console.log('New user cognitoUser: ' + cognitoUser.getUsername());
-        resolve(cognitoUser);
-    });
-  });
-}
-
-const awsSignIn = (username, password) => {
-  const authenticationDetails = new AuthenticationDetails({
-      Username: username,
-      Password: password
-  });
-
-  const userData = {
-      Username: username,
-      Pool: userPool
-  };
-
-  const cognitoUser = new CognitoUser(userData);
-
-  return new Promise((resolve, reject) => {
-      cognitoUser.authenticateUser(authenticationDetails, {
-          onSuccess: function (result) {
-              const accessToken = result.getAccessToken().getJwtToken();
-              const refreshToken = result.getRefreshToken().getToken();
-              resolve({accessToken, refreshToken});
-          },
-          onFailure: function (err) {
-              console.log(err);
-              reject(err);
-          }
-      });
-  });
-}
-
 
 app.post("/signup", async (req, res) => {
   try {
@@ -189,6 +129,25 @@ app.post("/verify", async (req, res) => {
     });
   } catch (error) {
     console.error('Error verifying token:', error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.post("/refresh-token", async (req, res) => {
+  try {
+    const { awsRefreshToken } = req.body;
+    console.log(req.body);
+
+    if (!awsRefreshToken) {
+      return res.status(400).json({ message: "Refresh token is required" });
+    }
+
+    const { accessToken, idToken } = await awsRefreshTokenExchange(awsRefreshToken);
+
+    // Send the new access token and id token in the response
+    res.status(200).json({ accessToken, idToken });
+  } catch (error) {
+    console.error('Error refreshing token:', error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
