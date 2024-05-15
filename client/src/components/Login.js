@@ -13,14 +13,16 @@ function Login({ setIsAuth }) {
       username,
       password,
     }).then((res) => {
-      console.log('request url: ', backend_url + '/login');
-      const { firstName, lastName, username, token, userId } = res.data;
-      if (token) {
+      console.log('res.data: ', res.data);
+      const { firstName, lastName, username, token, userId, awsAccessToken, awsRefreshToken } = res.data;
+      if (token && awsAccessToken) {
         cookies.set("token", token);
         cookies.set("userId", userId);
         cookies.set("username", username);
         cookies.set("firstName", firstName);
         cookies.set("lastName", lastName);
+        cookies.set("awsAccessToken", awsAccessToken);
+        cookies.set("awsRefreshToken", awsRefreshToken);
         setIsAuth(true);
       } else {
         alert("Bad credidentials");
@@ -29,7 +31,6 @@ function Login({ setIsAuth }) {
     .catch((err) => {
       alert("Error logging in");
       console.log(err);
-      console.log('request url: ', backend_url + '/login');
     });
   };
   return (

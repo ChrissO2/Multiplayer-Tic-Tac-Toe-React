@@ -7,12 +7,27 @@ import Cookies from "universal-cookie";
 import { useState } from "react";
 import JoinGame from "./components/JoinGame";
 
+const verifyToken = async (accessToken) => {
+  const response = await fetch("http://localhost:3001/verify", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ accessToken }),
+  });
+  const data = await response.json();
+  alert(data.message);
+}
+
 function App() {
-  const api_key = "bqxzr4ejb4e2";
+  const api_key = "5u5qsty97bup";
   const cookies = new Cookies();
   const token = cookies.get("token");
+  const awsAccessToken = cookies.get("awsAccessToken");
+  const awsRefreshToken = cookies.get("awsRefreshToken");
   const client = StreamChat.getInstance(api_key);
   const [isAuth, setIsAuth] = useState(false);
+  const [needConfirmation, setNeedConfirmation] = useState(false);
 
   const logOut = () => {
     cookies.remove("token");
@@ -22,6 +37,8 @@ function App() {
     cookies.remove("hashedPassword");
     cookies.remove("channelName");
     cookies.remove("username");
+    cookies.remove("awsAccessToken");
+    cookies.remove("awsRefreshToken");
     client.disconnectUser();
     setIsAuth(false);
   };
@@ -55,6 +72,9 @@ function App() {
           <Login setIsAuth={setIsAuth} />
         </>
       )}
+      {awsAccessToken &&
+      <button onClick={() => {verifyToken(awsAccessToken)}}>verify token</button>}
+      
     </div>
   );
 }

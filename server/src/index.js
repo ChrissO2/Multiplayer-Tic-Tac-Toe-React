@@ -4,18 +4,20 @@ const { StreamChat } = require("stream-chat");
 const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcrypt");
 const AWS = require("aws-sdk");
-const CognitoUserPool = require('amazon-cognito-identity-js').CognitoUserPool;
-const CognitoUserAttribute = require('amazon-cognito-identity-js').CognitoUserAttribute;
-const AuthenticationDetails = require('amazon-cognito-identity-js').AuthenticationDetails;
-const CognitoUser = require('amazon-cognito-identity-js').CognitoUser;
+const { CognitoUserPool, CognitoUserAttribute, AuthenticationDetails, CognitoUser } = require('amazon-cognito-identity-js');
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
+const bodyParser = require('body-parser')
 
 
 
 const app = express();
 
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(express.json());
 const api_key = "5u5qsty97bup";
 const api_secret =
@@ -85,7 +87,6 @@ const awsSignIn = (username, password) => {
 
 app.post("/signup", async (req, res) => {
   try {
-    console.log('req.body: ', req.body);
     const { firstName, lastName, username, password, email } = req.body;
     const userId = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -97,11 +98,8 @@ app.post("/signup", async (req, res) => {
       lastName,
       hashedPassword,
     })
-    console.log('api token: ', token);
     const cognitoUser = await awsSignUp(username, password, email);
     cognitoUserName = cognitoUser.getUsername();
-    console.log('cognitoUser: ', cognitoUser);
-    console.log('cognitoUser: ', cognitoUser.getUsername());
     if (!cognitoUser) {
       return res.json({ message: "Error signing up" });
     }
@@ -123,7 +121,6 @@ app.post("/login", async (req, res) => {
     }
 
     const token = serverClient.createToken(users[0].id);
-    console.log('users: ', users);
     const passwordMatch = await bcrypt.compare(
       password,
       users[0].hashedPassword
@@ -132,21 +129,13 @@ app.post("/login", async (req, res) => {
     var awsAccessToken = '';
     var awsRefreshToken = '';
     await awsSignIn(username, password).then(({accessToken, refreshToken}) => {
-      // console.log('awsSignIn accessToken: ', accessToken);
-      // console.log('awsSignIn refreshToken: ', refreshToken);
       awsAccessToken = accessToken;
       awsRefreshToken = refreshToken;
-      console.log('awsSignIn awsAccessToken: ', awsAccessToken);
-      console.log('awsSignIn awsRefreshToken: ', awsRefreshToken);
     }).catch((err) => {
       console.log('awsSignIn err: ', err);
     });
-    console.log('passwordMatch: ', passwordMatch);
-    console.log('------------------');
-    console.log('awsAccessToken outside: ', awsAccessToken)
 
     if (passwordMatch && awsAccessToken.length > 0) {
-      console.log('User found')
       res.json({
         token,
         firstName: users[0].firstName,
@@ -158,11 +147,52 @@ app.post("/login", async (req, res) => {
       });
     }
   } catch (error) {
-    console.log('Error loggin in');
     console.log(error);
     res.json(error);
   }
 });
+
+app.post("/verify", async (req, res) => {
+  try {
+    const { accessToken } = req.body;
+
+    if (!accessToken) {
+      return res.status(400).json({ message: "Access token is required" });
+    }
+
+    const jwksClient = require('jwks-rsa');
+    const jwksUri = 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Gg858zqYR/.well-known/jwks.json';
+
+    const client = jwksClient({
+      jwksUri
+    });
+
+    const getSigningKey = (header, callback) => {
+      client.getSigningKey(header.kid, (err, key) => {
+        if (err) {
+          console.error('Error getting signing key:', err);
+          return callback(err);
+        }
+        const signingKey = key.publicKey || key.rsaPublicKey;
+        callback(null, signingKey);
+      });
+    };
+
+    jwt.verify(accessToken, getSigningKey, { algorithms: ['RS256'] }, (err, decoded) => {
+      if (err) {
+        console.error('JWT verification error:', err);
+        return res.status(401).json({ message: "Invalid token" });
+      } else {
+        console.log('Decoded token:', decoded);
+        return res.status(200).json({ message: "Token verified successfully", decoded });
+      }
+    });
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 app.listen(3001, () => {
   console.log("Server is running on port 3001");

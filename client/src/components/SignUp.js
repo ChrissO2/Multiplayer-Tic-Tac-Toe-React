@@ -3,24 +3,24 @@ import Axios from "axios";
 import Cookies from "universal-cookie";
 import { backend_url } from "../api_utils";
 
-function SignUp({ setIsAuth }) {
+function SignUp() {
   const cookies = new Cookies();
   const [user, setUser] = useState(null);
 
   const signUp = () => {
     Axios.post(backend_url + '/signup', user).then((res) => {
-      console.log('request url: ', backend_url + '/signup');
-      const { token, userId, firstName, lastName, username, hashedPassword } =
+      const { token, userId, firstName, lastName, username, hashedPassword, cognitoUserName } =
         res.data;
-      cookies.set("token", token);
-      cookies.set("userId", userId);
-      cookies.set("username", username);
-      cookies.set("firstName", firstName);
-      cookies.set("lastName", lastName);
-      cookies.set("hashedPassword", hashedPassword);
-      setIsAuth(true);
+
+      console.log('res.data: ', res.data);
+      
+      if (token && cognitoUserName) {
+        alert("Confirm your email");
+      }
+      else {
+        alert("Bad credidentials");
+      }
     }).catch((err) => {
-      console.log('request url: ', backend_url + '/signup');
       console.log(err);
     });
   };
@@ -43,6 +43,12 @@ function SignUp({ setIsAuth }) {
         placeholder="Username"
         onChange={(event) => {
           setUser({ ...user, username: event.target.value });
+        }}
+      />
+      <input
+        placeholder="Email"
+        onChange={(event) => {
+          setUser({ ...user, email: event.target.value });
         }}
       />
       <input
